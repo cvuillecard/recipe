@@ -1,6 +1,8 @@
 package com.recipe.app.dao.ingredient;
 
-import com.recipe.app.bo.ingredient.Ingredient;
-import com.recipe.config.spring.dao.GenericDao;
+import com.recipe.app.bean.ingredient.IngredientBean;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface IngredientDao extends GenericDao<Ingredient, Long> {}
+@Repository("ingredientDao")
+public interface IngredientDao extends JpaRepository<IngredientBean, Long> {}

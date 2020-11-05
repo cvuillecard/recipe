@@ -1,16 +1,17 @@
 package com.recipe.app.service.ingredient;
 
 import com.recipe.app.bean.ingredient.IngredientBean;
-import com.recipe.app.bo.ingredient.Ingredient;
 import com.recipe.app.type.ingredient.IngredientType;
 import com.recipe.config.spring.JpaConfig;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.util.Assert;
+
+import java.util.Optional;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -20,21 +21,21 @@ public final class IngredientServiceTest {
 
     @Test
     public void should_create_ingredient_create() {
-        Ingredient ingredient = new IngredientBean("Kaki", IngredientType.FRUIT);
+        IngredientBean ingredient = new IngredientBean("Kaki", IngredientType.FRUIT);
 
         // state : bean initialized without id
-        Assert.isNull(ingredient.getId(), "Ingredient id must be null for the test");
+        Assert.assertNull(ingredient.getId());
 
         // when : persist
         ingredientService.create(ingredient);
 
         // then : id has been generated
-        Assert.notNull(ingredient.getId(), "Ingredient not persisted [id = null]");
+        Assert.assertNotNull(ingredient.getId());
 
         // when : delete
         ingredientService.delete(ingredient);
 
         // then : ingredient doesn't exist in database
-        Assert.isNull(ingredientService.findById(ingredient.getId()), "Ingredient not deleted : exists in database");
+        Assert.assertEquals(Optional.empty(), ingredientService.findById(ingredient.getId()));
     }
 }

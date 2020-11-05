@@ -33,7 +33,7 @@
         <liquibase.version>3.5.3</liquibase.version>
         <logback.version>1.2.3</logback.version>
         <junit.version>4.12</junit.version>
-        <mockito.version>1.10.18</mockito.version>
+        <mockito.version>2.0.0-beta</mockito.version>
 
         <!--plugins-->
         <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
