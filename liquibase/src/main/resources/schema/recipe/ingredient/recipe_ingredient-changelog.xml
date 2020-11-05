@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="cvuillecard">
+        <createTable catalogName="${db.catalog.name}" schemaName="${db.schema.name}" tableName="RECIPE_INGREDIENT">
+            <column name="RECIPE_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" foreignKeyName="FK_RECIPE"
+                             referencedTableName="RECIPE" referencedColumnNames="REC_ID"/>
+            </column>
+            <column name="INGREDIENT_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" foreignKeyName="FK_INGREDIENT"
+                             referencedTableName="INGREDIENT" referencedColumnNames="ING_ID"/>
+            </column>
+            <column name="REC_ING_QUANTITY" type="INTEGER">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

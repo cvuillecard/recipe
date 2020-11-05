@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="cvuillecard">
+        <createTable catalogName="${db.catalog.name}" schemaName="${db.schema.name}" tableName="INGREDIENT">
+            <column name="ING_ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="ING_NAME" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="ING_TYPE" type="VARCHAR(9)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

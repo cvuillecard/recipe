@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="cvuillecard">
+        <sql>
+            INSERT INTO INGREDIENT (ING_NAME, ING_TYPE) VALUES
+            ('Coconut', 'FRUIT'),
+            ('Apple', 'FRUIT'),
+            ('Banana', 'FRUIT'),
+            ('Pine Apple', 'FRUIT'),
+            ('Strawberry', 'FRUIT'),
+            ('Cherry', 'FRUIT'),
+            ('Pear', 'FRUIT'),
+            ('Kiwi', 'FRUIT'),
+            ('Mango', 'FRUIT'),
+            ('Peach', 'FRUIT'),
+            ('Lemon', 'FRUIT'),
+            ('Orange', 'FRUIT')
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="2" author="cvuillecard">
+        <sql>
+            INSERT INTO INGREDIENT (ING_NAME, ING_TYPE) VALUES
+            ('Rise', 'VEGETABLE'),
+            ('Potato', 'VEGETABLE'),
+            ('But', 'VEGETABLE'),
+            ('Tomato', 'VEGETABLE'),
+            ('Salad', 'VEGETABLE'),
+            ('Onion', 'VEGETABLE'),
+            ('Pepper', 'VEGETABLE'),
+            ('Carrot', 'VEGETABLE'),
+            ('Bean', 'VEGETABLE'),
+            ('Polenta', 'VEGETABLE'),
+            ('Semolina', 'VEGETABLE'),
+            ('Artichoke', 'VEGETABLE'),
+            ('Shuffler', 'VEGETABLE'),
+            ('Beet', 'VEGETABLE'),
+            ('Eggplant', 'VEGETABLE'),
+            ('Asparagus', 'VEGETABLE'),
+            ('Endive', 'VEGETABLE'),
+            ('Pumpkin', 'VEGETABLE'),
+            ('Fennel', 'VEGETABLE'),
+            ('Basil', 'VEGETABLE'),
+            ('Turnip', 'VEGETABLE'),
+            ('Broccoli', 'VEGETABLE'),
+            ('Radish', 'VEGETABLE'),
+            ('Cabbage', 'VEGETABLE'),
+            ('Mushroom', 'VEGETABLE'),
+            ('Parsley', 'VEGETABLE'),
+            ('Garlic', 'VEGETABLE'),
+            ('Soya', 'VEGETABLE'),
+            ('Echalotte', 'VEGETABLE')
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="3" author="cvuillecard">
+        <sql>
+            INSERT INTO INGREDIENT (ING_NAME, ING_TYPE) VALUES
+            ('Pepper', 'SPICE'),
+            ('Allspice', 'SPICE'),
+            ('Anise', 'SPICE'),
+            ('Cumin', 'SPICE'),
+            ('Mustard', 'SPICE'),
+            ('Chicory', 'SPICE'),
+            ('Ginger', 'SPICE'),
+            ('Paprika', 'SPICE'),
+            ('Curry', 'SPICE'),
+            ('Lavender', 'SPICE'),
+            ('Saffron', 'SPICE'),
+            ('Lemon grass', 'SPICE'),
+            ('Sage', 'SPICE'),
+            ('Sesame', 'SPICE'),
+            ('Anis', 'SPICE'),
+            ('Rosemary', 'SPICE'),
+            ('Thyme', 'SPICE'),
+            ('Vanilla', 'SPICE'),
+            ('Wasabi', 'SPICE'),
+            ('Coriander', 'SPICE'),
+            ('Borage', 'SPICE'),
+            ('Chives', 'SPICE'),
+            ('Cinnamon', 'SPICE')
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="4" author="cvuillecard">
+        <sql>
+            INSERT INTO INGREDIENT (ING_NAME, ING_TYPE) VALUES
+            ('Salt', 'CONDIMENT'),
+            ('Sugar', 'CONDIMENT'),
+            ('Ketchup', 'CONDIMENT'),
+            ('Mustard', 'CONDIMENT'),
+            ('Pistou', 'CONDIMENT'),
+            ('Mayonnaise', 'CONDIMENT'),
+            ('Harissa', 'CONDIMENT'),
+            ('Onion Chutney', 'CONDIMENT'),
+            ('Westchester sauce', 'CONDIMENT'),
+            ('Viandox', 'CONDIMENT'),
+            ('Barbecue sauce', 'CONDIMENT'),
+            ('Andalouse sauce', 'CONDIMENT'),
+            ('Algerian sauce', 'CONDIMENT'),
+            ('Tabasco', 'CONDIMENT'),
+            ('Hot sauce', 'CONDIMENT'),
+            ('Cream fresh', 'CONDIMENT'),
+            ('Butter', 'ORGANIC'),
+            ('Salt butter', 'ORGANIC'),
+            ('Peanut butter', 'ORGANIC')
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="5" author="cvuillecard">
+        <sql>
+            INSERT INTO INGREDIENT (ING_NAME, ING_TYPE) VALUES
+            ('Oil', 'LIQUID'),
+            ('Vinegar', 'LIQUID'),
+            ('Milk', 'LIQUID'),
+            ('Coca', 'LIQUID'),
+            ('Fanta', 'LIQUID'),
+            ('Orangina', 'LIQUID'),
+            ('Sprite', 'LIQUID'),
+            ('Still Water', 'LIQUID'),
+            ('Sparkling Water', 'LIQUID'),
+            ('Syrup', 'LIQUID'),
+            ('Honey', 'LIQUID')
+            ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="6" author="cvuillecard">
+        <sql>
+            INSERT INTO INGREDIENT (ING_NAME, ING_TYPE) VALUES
+            ('Chicken', 'ORGANIC'),
+            ('Beef', 'ORGANIC'),
+            ('Duck', 'ORGANIC'),
+            ('Turkey', 'ORGANIC'),
+            ('Pigeon', 'ORGANIC'),
+            ('Quail', 'ORGANIC'),
+            ('Lamb', 'ORGANIC'),
+            ('Cow', 'ORGANIC'),
+            ('Veal', 'ORGANIC'),
+            ('Sheep', 'ORGANIC'),
+            ('Bar', 'ORGANIC'),
+            ('Dorade', 'ORGANIC'),
+            ('Tuna', 'ORGANIC'),
+            ('Salmon', 'ORGANIC'),
+            ('Trout', 'ORGANIC'),
+            ('Squid', 'ORGANIC'),
+            ('Mussels', 'ORGANIC'),
+            ('Snail', 'ORGANIC'),
+            ('Egg', 'ORGANIC')
+            ;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
