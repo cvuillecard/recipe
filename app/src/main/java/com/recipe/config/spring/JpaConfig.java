@@ -4,15 +4,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.persistence.EntityManagerFactory;
 
 @Configuration
 @EnableTransactionManagement
 @ComponentScans(value = { @ComponentScan({ "com.recipe.app" }) })
+@EnableJpaRepositories(value = "com.recipe.app.repository")
 public class JpaConfig {
     @Bean
-    public LocalEntityManagerFactoryBean getEntityManagerFactoryBean() {
+    public LocalEntityManagerFactoryBean entityManagerFactory() {
         final LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
 
         factoryBean.setPersistenceUnitName("LOCAL_PERSISTENCE");
@@ -21,11 +25,9 @@ public class JpaConfig {
     }
 
     @Bean
-    public JpaTransactionManager getJpaTransactionManager() {
-        final JpaTransactionManager transactionManager = new JpaTransactionManager();
-
-        transactionManager.setEntityManagerFactory(getEntityManagerFactoryBean().getObject());
-
+    JpaTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
         return transactionManager;
     }
 }

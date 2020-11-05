@@ -32,8 +32,8 @@
         <spring-data-jpa.version>2.4.0</spring-data-jpa.version>
         <liquibase.version>3.5.3</liquibase.version>
         <logback.version>1.2.3</logback.version>
-        <junit.version>4.12</junit.version>
-        <mockito.version>1.10.18</mockito.version>
+        <junit.version>4.13.1</junit.version>
+        <mockito.version>2.0.0-beta</mockito.version>
 
         <!--plugins-->
         <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
@@ -235,26 +235,28 @@
 
     <profiles>
         <profile>
-            <id>localhost</id>
+            <id>dev</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <db.user>smoothman</db.user>
                 <db.password>smoothy</db.password>
                 <db.catalog.name>recipe</db.catalog.name>
+                <spring.profiles.active>dev</spring.profiles.active>
             </properties>
         </profile>
 
         <profile>
             <id>test</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
                 <db.user>test</db.user>
                 <db.password>test</db.password>
                 <db.catalog.name>recipe_test</db.catalog.name>
+                <spring.profiles.active>test</spring.profiles.active>
             </properties>
         </profile>
     </profiles>
