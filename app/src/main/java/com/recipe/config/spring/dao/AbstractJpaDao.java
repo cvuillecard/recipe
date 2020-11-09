@@ -24,7 +24,7 @@ public abstract class AbstractJpaDao<B extends T, T extends Entity<ID>, ID exten
 
     public AbstractJpaDao() {
         this.type = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        this.mPersistentClassName = this.type.getName().substring(this.type.getName().lastIndexOf('.') + 1);
+        this.mPersistentClassName = this.type.getSimpleName();
     }
 
     public Class<T> getPersistentClass() {
