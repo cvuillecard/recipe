@@ -3,7 +3,7 @@ package com.recipe.config.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class FunctionalException extends Exception {
+public final class FunctionalException extends RuntimeException {
     private static final Logger LOG = LoggerFactory.getLogger(FunctionalException.class);
 
     public FunctionalException() {
