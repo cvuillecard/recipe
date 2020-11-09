@@ -1,7 +1,6 @@
 package com.recipe.app.service.ingredient;
 
-import com.recipe.app.bean.ingredient.IngredientBean;
-import com.recipe.app.bo.ingredient.Ingredient;
+import com.recipe.app.entity.ingredient.Ingredient;
 import com.recipe.config.spring.service.GenericService;
 
-public interface IngredientService extends GenericService<IngredientBean, Long> {}
+public interface IngredientService extends GenericService<Ingredient, Long> {}

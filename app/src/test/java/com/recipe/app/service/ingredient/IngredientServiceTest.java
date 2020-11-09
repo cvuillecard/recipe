@@ -1,6 +1,6 @@
 package com.recipe.app.service.ingredient;
 
-import com.recipe.app.bean.ingredient.IngredientBean;
+import com.recipe.app.entity.ingredient.Ingredient;
 import com.recipe.app.type.ingredient.IngredientType;
 import com.recipe.config.spring.JpaConfig;
 import org.junit.Assert;
@@ -23,7 +23,7 @@ public final class IngredientServiceTest {
 
     @Test
     public void should_create_ingredient_create() {
-        IngredientBean ingredient = new IngredientBean("Kaki", IngredientType.FRUIT);
+        Ingredient ingredient = new Ingredient("Kaki", IngredientType.FRUIT);
 
         // state : bean initialized without id
         Assert.assertNull(ingredient.getId());
