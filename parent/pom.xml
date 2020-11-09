@@ -235,7 +235,7 @@
 
     <profiles>
         <profile>
-            <id>localhost</id>
+            <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>

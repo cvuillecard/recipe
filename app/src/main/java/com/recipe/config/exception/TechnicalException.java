@@ -3,7 +3,7 @@ package com.recipe.config.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class TechnicalException extends Exception {
+public final class TechnicalException extends RuntimeException {
     private static final Logger LOG = LoggerFactory.getLogger(TechnicalException.class);
 
     public TechnicalException() { super(); }
