@@ -14,6 +14,18 @@ public interface BaseRepository<T, ID extends Serializable> extends JpaRepositor
     void detach(final T bean);
 
     /**
+     * find all the elements of the sequence given and returns records corresponding
+     *
+     * @param iterable entity sequence
+     * @param excludeFields field names to exclude from reflection
+     *
+     * @return records
+     *
+     *
+     */
+    Iterable<T> findAll(final Iterable<T> iterable, final String... excludeFields);
+
+    /**
      * Find the corresponding records for the given entity and delete them if found.
      * Then save the entity given as parameter.
      *
@@ -28,24 +40,27 @@ public interface BaseRepository<T, ID extends Serializable> extends JpaRepositor
      * Then save the entities sequence given as parameter.
      *
      * @param iterable the sequence of entities to overwrite
+     * @param excludeFields field names of the class entity to exclude from query
      * @see com.recipe.config.spring.repository.BaseRepository#overwrite
      */
-    void overwriteAll(final Iterable<T> iterable);
+    void overwriteAll(final Iterable<T> iterable, final String... excludeFields);
 
     /**
-     * Find all records corresponding to the entity given and delete them if found.
+     * Find all records corresponding to the sequence of entities given and delete them if found.
      *
-     * @param bean the entity to delete
-     * @param flush frees and execute the cache instructions
+     * @param iterable the entities to delete
+     * @param excludeFields field names of the class entity to exclude from query
      */
-    void deleteByExample(final T bean, final boolean flush);
+    void deleteByExample(final Iterable<T> iterable, final String... excludeFields);
 
     /**
-     * Find all entries corresponding to the element sequence and delete each found entry.
-     * Then, flushes the instruction cache.
+     * Find all records for the entity given and delete them if found.
      *
-     * @param iterable the sequence of entities to delete
-     * @see com.recipe.config.spring.repository.BaseRepository#deleteByExample
+     * @param bean to delete
+     * @param excludeFields field names to exclude from query
      */
-    void deleteByExamples(final Iterable<T> iterable);
+    void deleteByExample(final T bean, final String... excludeFields);
+
+    void deleteByIds(final Iterable<ID> ids, final Class<T> clazz);
+
 }
