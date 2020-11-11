@@ -127,7 +127,12 @@
             ('Still Water', 'LIQUID'),
             ('Sparkling Water', 'LIQUID'),
             ('Syrup', 'LIQUID'),
-            ('Honey', 'LIQUID')
+            ('Honey', 'LIQUID'),
+            ('Vodka', 'LIQUID'),
+            ('Wisky', 'LIQUID'),
+            ('Cointreau', 'LIQUID'),
+            ('Blue curacao', 'LIQUID'),
+            ('Lemon juice', 'LIQUID')
             ;
         </sql>
     </changeSet>
@@ -153,7 +158,8 @@
             ('Squid', 'ORGANIC'),
             ('Mussels', 'ORGANIC'),
             ('Snail', 'ORGANIC'),
-            ('Egg', 'ORGANIC')
+            ('Egg', 'ORGANIC'),
+            ('Ice', 'ORGANIC')
             ;
         </sql>
     </changeSet>
