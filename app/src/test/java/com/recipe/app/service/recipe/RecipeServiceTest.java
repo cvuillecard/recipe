@@ -23,7 +23,7 @@ public class RecipeServiceTest extends AbstractTest {
         final Ingredient ice = new Ingredient("Ice", IngredientType.ORGANIC);
         final List<Ingredient> ingredients = (List<Ingredient>)ingredientService.findAll(Arrays.asList(lemon, lemonJuice, curacao, vodka, ice), "id", "recipes");
 
-        // state : Take a glass, with crushed ice, your hard drinks and check you found all the ingredients necessary..
+        // state : check we have all the necessary ingredients
         Assert.assertEquals(5, ingredients.size());
     }
 }

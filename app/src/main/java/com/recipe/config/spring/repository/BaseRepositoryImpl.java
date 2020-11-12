@@ -7,10 +7,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,8 +30,11 @@ public class BaseRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRep
     @Override
     public Iterable<T> findAll(final Iterable<T> iterable, final String... excludeFields) {
         if (iterable == null || !iterable.iterator().hasNext()) return Collections.EMPTY_LIST;
+
+        T inst = iterable.iterator().next();
         final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final Class clazz = iterable.iterator().next().getClass();
+        final Class clazz = inst.getClass();
+        final Map<String, Method> getterFields = ReflectUtil.mapGetters(inst, excludeFields);
         final CriteriaQuery<T> query = cb.createQuery(clazz);
         final Root<T> root = query.from(clazz);
 
@@ -42,11 +42,17 @@ public class BaseRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRep
         Predicate orCond = null;
 
         while (iterator.hasNext()) {
-            final Map<String, Object> classFields = ReflectUtil.getFields(iterator.next(), excludeFields);
+            inst = iterator.next();
             Predicate andCond = null;
-            for (Map.Entry<String, Object> entry : classFields.entrySet()) {
-                final Predicate equals = cb.equal(root.get(entry.getKey()), entry.getValue());
-                andCond = (andCond == null) ? equals : cb.and(andCond, equals);
+            for (final Map.Entry<String, Method> entry : getterFields.entrySet()) {
+                try {
+                    final Path<Object> path = root.get(entry.getKey());
+                    final Object value = entry.getValue().invoke(inst);
+                    final Predicate fieldCond = (value != null) ? cb.equal(path, value) : cb.isNull(path);
+                    andCond = (andCond == null) ? fieldCond : cb.and(andCond, fieldCond);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    LOG.error(e.getMessage());
+                }
             }
             orCond = (orCond == null) ? andCond : cb.or(orCond, andCond);
         }
