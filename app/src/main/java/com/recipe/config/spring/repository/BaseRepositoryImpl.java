@@ -29,7 +29,7 @@ public class BaseRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRep
 
     @Override
     public Iterable<T> findAll(final Iterable<T> iterable, final String... excludeFields) {
-        if (iterable == null || !iterable.iterator().hasNext()) return Collections.EMPTY_LIST;
+        if (iterable == null || !iterable.iterator().hasNext()) return null;
 
         T inst = iterable.iterator().next();
         final CriteriaBuilder cb = em.getCriteriaBuilder();
