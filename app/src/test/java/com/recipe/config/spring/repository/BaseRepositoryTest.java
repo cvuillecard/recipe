@@ -21,12 +21,14 @@ public final class BaseRepositoryTest extends AbstractTest {
      *  Note : is null clause in query built is not tested because of MCD null constraints preventing null values on all columns of schema
      */
     @Test
-    public void should_return_empty_list_on_null_parameters_findAll() {
+    public void should_return_null_if_null_or_empty_iterable_findAll() {
         // when : null parameters
-        final List<Ingredient> ingredients = (List<Ingredient>) ingredientService.findAll((Iterable<Ingredient>) null, null);
+        final List<Ingredient> emptyIterable = (List<Ingredient>) ingredientService.findAll((Iterable<Ingredient>) Collections.EMPTY_LIST, null);
+        final List<Ingredient> nullParams = (List<Ingredient>) ingredientService.findAll((Iterable<Ingredient>) null, null);
 
-        // then : empty list
-        Assert.assertNotNull(ingredients);
+        // then : returns null
+        Assert.assertNull(nullParams);
+        Assert.assertNull(emptyIterable);
     }
 
     @Test
