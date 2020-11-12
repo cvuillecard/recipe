@@ -15,12 +15,22 @@ public final class IngredientServiceTest extends AbstractTest {
     @Autowired private IngredientService ingredientService;
 
     @Test
-    public void should_create_ingredient_create() {
+    public void should_not_create_ingredient_without_type_or_name_save() {
+        final Ingredient unknownType = new Ingredient("Unknown Ingredient", null);
+        final Ingredient unknownName = new Ingredient(null, IngredientType.SPICE);
+
+        // when : trying to persist > org.postgresql.util.PSQLException: ERROR: null value in column "ing_type" violates not-null constraint
+        Assert.assertThrows(Exception.class, () -> ingredientService.save(unknownType));
+        Assert.assertThrows(Exception.class, () -> ingredientService.save(unknownName));
+    }
+
+    @Test
+    public void should_create_ingredient_save() {
+        // state : bean initialized without id
         Ingredient ingredient = new Ingredient("Kaki", IngredientType.FRUIT);
 
         ingredientService.deleteByExample(ingredient, "id", "recipes");
 
-        // state : bean initialized without id
         Assert.assertNull(ingredient.getId());
 
         // when : persist

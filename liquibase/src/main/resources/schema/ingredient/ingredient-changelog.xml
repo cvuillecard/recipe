@@ -6,7 +6,7 @@
     <changeSet id="1" author="cvuillecard">
         <createTable catalogName="${db.catalog.name}" schemaName="${db.schema.name}" tableName="INGREDIENT">
             <column name="ING_ID" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ING_NAME" type="VARCHAR(255)">
                 <constraints nullable="false" />
