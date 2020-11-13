@@ -21,7 +21,7 @@ public class RecipeServiceTest extends AbstractTest {
         final Ingredient curacao = new Ingredient("Blue curacao", IngredientType.LIQUID);
         final Ingredient vodka = new Ingredient("Vodka", IngredientType.LIQUID);
         final Ingredient ice = new Ingredient("Ice", IngredientType.ORGANIC);
-        final List<Ingredient> ingredients = (List<Ingredient>)ingredientService.findAll(Arrays.asList(lemon, lemonJuice, curacao, vodka, ice), "id", "recipes");
+        final List<Ingredient> ingredients = ingredientService.findAll(Arrays.asList(lemon, lemonJuice, curacao, vodka, ice));
 
         // state : check we have all the necessary ingredients
         Assert.assertEquals(5, ingredients.size());

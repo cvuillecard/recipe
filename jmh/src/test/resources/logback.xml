@@ -7,11 +7,11 @@
         </layout>
     </appender>
 
-    <logger name="com.recipe" level="TRACE"/>
-    <logger name="org.hibernate.SQL" level="DEBUG" />
-    <logger name="org.hibernate.type" level="TRACE" />
+    <logger name="com.recipe" level="OFF"/>
+    <logger name="org.hibernate.SQL" level="OFF" />
+    <logger name="org.hibernate.type" level="OFF" />
 
-    <root level="debug">
+    <root level="ERROR">
         <appender-ref ref="STDOUT" />
     </root>
 

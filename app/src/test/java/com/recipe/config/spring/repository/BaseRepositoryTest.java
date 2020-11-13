@@ -7,6 +7,7 @@ import config.AbstractTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,8 +24,8 @@ public final class BaseRepositoryTest extends AbstractTest {
     @Test
     public void should_return_null_if_null_or_empty_iterable_findAll() {
         // when : null parameters
-        final List<Ingredient> emptyIterable = (List<Ingredient>) ingredientService.findAll((Iterable<Ingredient>) Collections.EMPTY_LIST, null);
-        final List<Ingredient> nullParams = (List<Ingredient>) ingredientService.findAll((Iterable<Ingredient>) null, null);
+        final List<Ingredient> emptyIterable = ingredientService.findAll((Iterable<Ingredient>) Collections.EMPTY_LIST);
+        final List<Ingredient> nullParams = ingredientService.findAll((Iterable<Ingredient>) null);
 
         // then : returns null
         Assert.assertNull(nullParams);
@@ -39,7 +40,7 @@ public final class BaseRepositoryTest extends AbstractTest {
         final Ingredient curry = new Ingredient("Curry", IngredientType.SPICE);
 
         // when : trying to find all ingredients stated
-        final List<Ingredient> ingredients = (List<Ingredient>) ingredientService.findAll(Arrays.asList(chicken, creamFresh, curry), "id", "recipes");
+        final List<Ingredient> ingredients = (List<Ingredient>) ingredientService.findAll(Arrays.asList(chicken, creamFresh, curry));
 
         // then : ingredients found
         Assert.assertNotNull(ingredients);
@@ -64,34 +65,24 @@ public final class BaseRepositoryTest extends AbstractTest {
         final Ingredient unknownFruit = new Ingredient("Unknown", IngredientType.FRUIT);
 
         // when : trying to find the unknownFruit
-        final List<Ingredient> after = (List<Ingredient>) ingredientService.findAll(Arrays.asList(unknownFruit), "id", "recipes");
+        final List<Ingredient> after = ingredientService.findAll(Arrays.asList(unknownFruit));
 
         // then : empty list
         Assert.assertTrue(after.isEmpty());
     }
 
     @Test
-    public void should_not_find_existing_record_if_id_is_null_in_query_findAll() {
-        // state : one ingredient existing in database
+    public void should_findAll_by_example() {
         final Ingredient lemon = new Ingredient("Lemon", IngredientType.FRUIT);
+        final Ingredient mango = new Ingredient("Mango", IngredientType.FRUIT);
 
-        Assert.assertNull(lemon.getId());
+        List<Ingredient> defaultImpl = ingredientService.findAll(Example.of(lemon));
+        List<Ingredient> customImpl = ingredientService.findAll(Arrays.asList(lemon, mango));
 
-        // when : trying to find the lemon fruit with 'id' field not excluded, so id is null and null clause on id column will be used in where clause of findAll query
-        final List<Ingredient> ingredientsWithNullId = (List<Ingredient>) ingredientService.findAll(Collections.singletonList(lemon), "recipes");
+        Assert.assertTrue(!defaultImpl.isEmpty());
+        Assert.assertTrue(!customImpl.isEmpty());
 
-        // then : empty list because of id not excluded in findAll query
-        Assert.assertEquals(0, ingredientsWithNullId.size());
-
-        // when : trying to find the lemon fruit with 'id' excluded from where clause
-        final List<Ingredient> ingredientsNotNullId = (List<Ingredient>) ingredientService.findAll(Collections.singletonList(lemon), "id", "recipes");
-
-        // then : lemon found
-        Assert.assertEquals(1, ingredientsNotNullId.size());
-
-        Assert.assertNull(lemon.getId());
-        Assert.assertNotNull(ingredientsNotNullId.get(0).getId());
-        Assert.assertEquals(lemon.getName(), ingredientsNotNullId.get(0).getName());
-        Assert.assertEquals(lemon.getType(), ingredientsNotNullId.get(0).getType());
+        Assert.assertEquals(1, defaultImpl.size());
+        Assert.assertEquals(2, customImpl.size());
     }
 }

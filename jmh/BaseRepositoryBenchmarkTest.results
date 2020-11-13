@@ -1,0 +1,3 @@
+Benchmark                                                                     Mode  Cnt       Score        Error  Units
+BaseRepositoryBenchmarkTest.findAllWithIterableCustomImplementation           avgt    3  171540.596 ±   2188.794  ns/op
+BaseRepositoryBenchmarkTest.findAllWithSingleExampleSpringDataImplementation  avgt    3  182696.074 ± 253985.401  ns/op

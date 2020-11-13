@@ -29,7 +29,7 @@ public final class IngredientServiceTest extends AbstractTest {
         // state : bean initialized without id
         Ingredient ingredient = new Ingredient("Kaki", IngredientType.FRUIT);
 
-        ingredientService.deleteByExample(ingredient, "id", "recipes");
+        ingredientService.delete(ingredient);
 
         Assert.assertNull(ingredient.getId());
 
@@ -84,7 +84,7 @@ public final class IngredientServiceTest extends AbstractTest {
         // when : find all ingredients with name "Pepper"
         final List<Ingredient> results = (List<Ingredient>) ingredientService.findAllByType(IngredientType.FRUIT);
 
-        // then : name equals
+        // then : not empty list
         Assert.assertTrue(results.size() > 1);
 
         IntStream.range(0, results.size()).forEach(i -> Assert.assertEquals(IngredientType.FRUIT, results.get(i).getType()));
