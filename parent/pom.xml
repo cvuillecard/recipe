@@ -23,6 +23,9 @@
         <project.main.resources>src/main/resources</project.main.resources>
         <project.test.resources>src/test/resources</project.test.resources>
 
+        <!--General default properties-->
+        <skipBenchmarkTests>true</skipBenchmarkTests>
+
         <!--General versions-->
         <postgresql.version>9.4-1201-jdbc4</postgresql.version>
         <spring.version>5.3.0</spring.version>
@@ -34,6 +37,7 @@
         <logback.version>1.2.3</logback.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.0.0-beta</mockito.version>
+        <jmh.version>1.21</jmh.version>
 
         <!--plugins-->
         <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
@@ -41,6 +45,7 @@
         <liquibase.maven.plugin.version>3.5.3</liquibase.maven.plugin.version>
         <maven.resources.plugin.version>3.1.0</maven.resources.plugin.version>
         <properties-maven.plugin.version>1.0.0</properties-maven.plugin.version>
+        <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -118,6 +123,19 @@
                 <artifactId>mockito-all</artifactId>
                 <version>${mockito.version}</version>
             </dependency>
+
+            <!--Jmh-->
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-core</artifactId>
+                <version>${jmh.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-generator-annprocess</artifactId>
+                <version>${jmh.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -174,6 +192,12 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>properties-maven-plugin</artifactId>
                     <version>${properties-maven.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

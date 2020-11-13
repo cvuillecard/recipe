@@ -15,6 +15,7 @@
         <module>parent</module>
         <module>liquibase</module>
         <module>app</module>
+        <module>jmh</module>
     </modules>
 
 </project>
