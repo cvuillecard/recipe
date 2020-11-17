@@ -14,18 +14,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@State(Scope.Benchmark)
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.NANOSECONDS)
 /**
  * Object : test performances of custom BaseRepository implementation
  *
  * Note : compare existing methods provided by SimpleJpaRepository with BaseRepository custom methods when possible
  */
+@State(Scope.Benchmark)
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class BaseRepositoryBenchmarkTest extends AbstractBenchmark {
     private static IngredientService ingredientService;
     private Ingredient single;
-    private final List<Ingredient> ingredientList = new ArrayList<>();
+    private final List<Ingredient> beanList = new ArrayList<>();
 
     @BeforeClass
     public static void initBenchmark() {
@@ -40,12 +40,12 @@ public class BaseRepositoryBenchmarkTest extends AbstractBenchmark {
 
     @Setup(Level.Iteration)
     public void setup() {
-        ingredientList.add(single = new Ingredient("Lemon", IngredientType.FRUIT));
-        ingredientList.add(new Ingredient("Mango", IngredientType.FRUIT));
-        ingredientList.add(new Ingredient("Orange", IngredientType.FRUIT));
-        ingredientList.add(new Ingredient("Tabasco", IngredientType.CONDIMENT));
-        ingredientList.add(new Ingredient("Milk", IngredientType.LIQUID));
-        ingredientList.add(new Ingredient("Beef", IngredientType.ORGANIC));
+        beanList.add(single = new Ingredient("Lemon", IngredientType.FRUIT));
+        beanList.add(new Ingredient("Mango", IngredientType.FRUIT));
+        beanList.add(new Ingredient("Orange", IngredientType.FRUIT));
+        beanList.add(new Ingredient("Tabasco", IngredientType.CONDIMENT));
+        beanList.add(new Ingredient("Milk", IngredientType.LIQUID));
+        beanList.add(new Ingredient("Beef", IngredientType.ORGANIC));
     }
 
     // with single bean
@@ -59,15 +59,15 @@ public class BaseRepositoryBenchmarkTest extends AbstractBenchmark {
         ingredientService.findAll(Collections.singletonList(single));
     }
 
-    // with ingredientList
+    // with beanList
     @Benchmark
     public void find_all_with_list_SimpleJpaRepository_findAll() {
-        for (Ingredient e : ingredientList)
+        for (Ingredient e : beanList)
             ingredientService.findAll(Example.of(e));
     }
 
     @Benchmark
     public void find_all_with_list_BaseRepository_findAll() {
-        ingredientService.findAll(ingredientList);
+        ingredientService.findAll(beanList);
     }
 }
