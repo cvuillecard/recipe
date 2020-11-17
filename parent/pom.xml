@@ -32,7 +32,7 @@
         <spring.test.version>5.3.0</spring.test.version>
         <hibernate.version>5.4.13.Final</hibernate.version>
         <javax.persistence.version>2.2</javax.persistence.version>
-        <spring-data-jpa.version>2.4.0</spring-data-jpa.version>
+        <spring-data-jpa.version>2.4.1</spring-data-jpa.version>
         <liquibase.version>3.5.3</liquibase.version>
         <logback.version>1.2.3</logback.version>
         <junit.version>4.12</junit.version>
