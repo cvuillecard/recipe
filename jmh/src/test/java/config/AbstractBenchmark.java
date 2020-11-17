@@ -23,7 +23,7 @@ public abstract class AbstractBenchmark {
     protected static Integer THREADS = 1;
 
     @Test
-    public void executeJmhRunner() throws RunnerException {
+    public void executeBenchmarkTest() throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include("\\." + this.getClass().getSimpleName() + "\\.")
                 .warmupIterations(WARMUP_ITERATIONS)

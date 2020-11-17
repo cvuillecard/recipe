@@ -21,8 +21,9 @@ public interface BaseRepository<T, ID extends Serializable> extends JpaRepositor
      * find all the elements of the sequence given and returns records corresponding if found
      *
      * @param iterable entity sequence
+     * @return records found or null if iterable is null or empty
      *
-     * @return records
+     * @see com.recipe.config.spring.repository.BaseRepository#findAll(Iterable, Sort)
      */
     <S extends T> List<S> findAll(final Iterable<T> iterable);
 
@@ -31,8 +32,9 @@ public interface BaseRepository<T, ID extends Serializable> extends JpaRepositor
      *
      * @param iterable entity sequence
      * @param sort sorting method
+     * @return records found or null if iterable is null or empty
      *
-     * @return records
+     * @see com.recipe.config.spring.repository.BaseRepository#findAll(Iterable)
      */
     <S extends T> List<S> findAll(final Iterable<T> iterable, final Sort sort);
 //
