@@ -72,7 +72,6 @@ public class BaseRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRep
     }
 
     @Override
-    //todo : not tested
     public <S extends T> List<S>  findAll(final Iterable<T> iterable, final Sort sort) {
         if (iterable == null || !iterable.iterator().hasNext()) return null;
         final IterableSpecification<T> spec = new IterableSpecification<>(iterable, EscapeCharacter.DEFAULT);
