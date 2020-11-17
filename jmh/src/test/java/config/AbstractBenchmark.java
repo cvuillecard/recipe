@@ -19,6 +19,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 public abstract class AbstractBenchmark {
     protected static Integer MEASUREMENT_ITERATIONS = 1;
     protected static Integer WARMUP_ITERATIONS = 1;
+    protected static Integer FORK = 0;
+    protected static Integer THREADS = 1;
 
     @Test
     public void executeJmhRunner() throws RunnerException {
@@ -27,15 +29,14 @@ public abstract class AbstractBenchmark {
                 .warmupIterations(WARMUP_ITERATIONS)
                 .measurementIterations(MEASUREMENT_ITERATIONS)
                 // do not use forking or the benchmark methods will not see references stored within its class
-                .forks(0)
+                .forks(FORK)
                 // do not use multiple threads
-                .threads(1)
+                .threads(THREADS)
                 .shouldDoGC(true)
-                .shouldFailOnError(true)
                 .resultFormat(ResultFormatType.TEXT)
                 .result(this.getClass().getSimpleName() + ".results")
                 .shouldFailOnError(true)
-                .jvmArgs("-server")
+                .jvmArgs("-server -Xms256m -Xmx2048m")
                 .build();
 
         new Runner(opt).run();

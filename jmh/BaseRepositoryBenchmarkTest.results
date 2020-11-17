@@ -1,3 +1,5 @@
-Benchmark                                                                     Mode  Cnt       Score        Error  Units
-BaseRepositoryBenchmarkTest.findAllWithIterableCustomImplementation           avgt    3  171540.596 ±   2188.794  ns/op
-BaseRepositoryBenchmarkTest.findAllWithSingleExampleSpringDataImplementation  avgt    3  182696.074 ± 253985.401  ns/op
+Benchmark                                                                          Mode  Cnt         Score         Error  Units
+BaseRepositoryBenchmarkTest.find_all_with_list_BaseRepository_findAll              avgt   20   6131881.877 ± 1070146.891  ns/op
+BaseRepositoryBenchmarkTest.find_all_with_list_SimpleJpaRepository_findAll         avgt   20  32985666.002 ± 5490959.067  ns/op
+BaseRepositoryBenchmarkTest.find_all_with_single_bean_BaseRepository_findAll       avgt   20    179212.344 ±    2600.854  ns/op
+BaseRepositoryBenchmarkTest.find_all_with_single_bean_SimpleJpaRepository_findAll  avgt   20    179356.808 ±    3207.654  ns/op
