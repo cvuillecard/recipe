@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Object : test performances of custom BaseRepository implementation
+ * Object : test performances of custom ExtensibleRepository implementation
  *
- * Note : compare existing methods provided by SimpleJpaRepository with BaseRepository custom methods when possible
+ * Note : compare existing methods provided by SimpleJpaRepository with ExtensibleRepository custom methods when possible
  */
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class BaseRepositoryBenchmarkTest extends AbstractBenchmark {
+public class ExtensibleRepositoryBenchmarkTest extends AbstractBenchmark {
     private static IngredientService ingredientService;
     private Ingredient single;
     private final List<Ingredient> beanList = new ArrayList<>();
@@ -35,7 +35,7 @@ public class BaseRepositoryBenchmarkTest extends AbstractBenchmark {
 
     @Autowired
     public void setIngredientService(final IngredientService ingredientService) {
-        BaseRepositoryBenchmarkTest.ingredientService = ingredientService;
+        ExtensibleRepositoryBenchmarkTest.ingredientService = ingredientService;
     }
 
     @Setup(Level.Iteration)

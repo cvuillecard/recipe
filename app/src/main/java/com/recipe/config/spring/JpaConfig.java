@@ -1,5 +1,7 @@
 package com.recipe.config.spring;
 
+import com.recipe.config.spring.repository.ExtensibleRepository;
+import com.recipe.config.spring.jpa.ExtensibleRepositoryFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
@@ -13,7 +15,9 @@ import javax.persistence.EntityManagerFactory;
 @Configuration
 @EnableTransactionManagement
 @ComponentScans(value = { @ComponentScan({ "com.recipe.app" }) })
-@EnableJpaRepositories(value = "com.recipe.app.dao")
+@EnableJpaRepositories(value = "com.recipe.app.repository",
+        repositoryFactoryBeanClass = ExtensibleRepositoryFactoryBean.class,
+        repositoryBaseClass = ExtensibleRepository.class)
 public class JpaConfig {
     @Bean
     public LocalEntityManagerFactoryBean entityManagerFactory() {

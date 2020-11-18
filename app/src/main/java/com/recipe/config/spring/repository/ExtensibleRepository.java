@@ -1,42 +1,38 @@
 package com.recipe.config.spring.repository;
 
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.recipe.config.spring.jpa.support.ExtendedJpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
 
 @NoRepositoryBean
-public interface BaseRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
+public interface ExtensibleRepository<T, ID extends Serializable> extends ExtendedJpaRepository<T, ID> {
     /**
      * Detach the bean from the entitymanager
      * @param bean
      */
     void detach(final T bean);
-
-    /**
-     * find all the elements of the sequence given and returns records corresponding if found
-     *
-     * @param iterable entity sequence
-     * @return records found or null if iterable is null or empty
-     *
-     * @see com.recipe.config.spring.repository.BaseRepository#findAll(Iterable, Sort)
-     */
-    <S extends T> List<S> findAll(final Iterable<T> iterable);
-
-    /**
-     * find all the elements of the sequence given and returns records corresponding if found
-     *
-     * @param iterable entity sequence
-     * @param sort sorting method
-     * @return records found or null if iterable is null or empty
-     *
-     * @see com.recipe.config.spring.repository.BaseRepository#findAll(Iterable)
-     */
-    <S extends T> List<S> findAll(final Iterable<T> iterable, final Sort sort);
+//
+//    /**
+//     * find all the elements of the sequence given and returns records corresponding if found
+//     *
+//     * @param iterable entity sequence
+//     * @return records found or null if iterable is null or empty
+//     *
+//     * @see com.recipe.config.spring.repository.ExtensibleRepository#findAll(Iterable, Sort)
+//     */
+//    <S extends T> List<S> findAll(final Iterable<T> iterable);
+//
+//    /**
+//     * find all the elements of the sequence given and returns records corresponding if found
+//     *
+//     * @param iterable entity sequence
+//     * @param sort sorting method
+//     * @return records found or null if iterable is null or empty
+//     *
+//     * @see com.recipe.config.spring.repository.ExtensibleRepository#findAll(Iterable)
+//     */
+//    <S extends T> List<S> findAll(final Iterable<T> iterable, final Sort sort);
 //
 //    /**
 //     * Find the corresponding records for the given entity and delete them if found.
@@ -54,7 +50,7 @@ public interface BaseRepository<T, ID extends Serializable> extends JpaRepositor
 //     *
 //     * @param iterable the sequence of entities to overwrite
 //     * @param excludeFields field names of the class entity to exclude from query
-//     * @see com.recipe.config.spring.repository.BaseRepository#overwrite
+//     * @see com.recipe.config.spring.repository.ExtensibleRepository#overwrite
 //     */
 //    void overwriteAll(final Iterable<T> iterable, final String... excludeFields);
 //

@@ -1,4 +1,4 @@
-package com.recipe.config.spring.repository.specification;
+package com.recipe.config.spring.jpa.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
@@ -10,7 +10,8 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 
 /**
- * ExtendedSpecification is a fork of org.springframework.data.jpa.domain.Specification
+ * <pre>
+ * ExtensibleSpecification is a fork of org.springframework.data.jpa.domain.Specification
  *
  * Purpose : delete the CriteriaQuery parameter of the default interface methods which blocks the implementation of custom specifications.
  *
@@ -21,31 +22,32 @@ import java.io.Serializable;
  * Reason 2 : because the parameter 'CriteriaQuery query' is never used in the actual spring implementation
  * of methods org.springframework.data.jpa.domain.SpecificationComposition.toPredicate()
  * which uses org.springframework.data.jpa.domain.Specification.toPredicate()
+ * </pre>
  *
  * @see org.springframework.data.jpa.domain.SpecificationComposition#toPredicate(Specification, Root, CriteriaQuery, CriteriaBuilder)
  * @see org.springframework.data.jpa.domain.Specification#toPredicate(Root, CriteriaQuery, CriteriaBuilder)
  *
- * @see com.recipe.config.spring.repository.specification.ExtendedSpecification#toPredicate(Root, CriteriaBuilder)
+ * @see ExtensibleSpecification#toPredicate(Root, CriteriaBuilder)
  */
-public interface ExtendedSpecification<T> extends Serializable {
+public interface ExtensibleSpecification<T> extends Serializable {
     long serialVersionUID = 1L;
 
-    static <T> ExtendedSpecification<T> not(@Nullable final ExtendedSpecification<T> spec) {
+    static <T> ExtensibleSpecification<T> not(@Nullable final ExtensibleSpecification<T> spec) {
         return spec == null ? (root, builder) -> null : (root, builder) -> builder.not(spec.toPredicate(root, builder));
     }
 
-    static <T> ExtendedSpecification<T> where(@Nullable final ExtendedSpecification<T> spec) {
+    static <T> ExtensibleSpecification<T> where(@Nullable final ExtensibleSpecification<T> spec) {
         return spec == null ? (root, builder) -> null : spec;
     }
 
-    default ExtendedSpecification<T> and(@Nullable ExtendedSpecification<T> other) {
-        return ExtendedSpecificationComposition.composed(this, other, CriteriaBuilder::and);
+    default ExtensibleSpecification<T> and(@Nullable final ExtensibleSpecification<T> other) {
+        return ExtensibleSpecificationComposition.composed(this, other, CriteriaBuilder::and);
     }
 
-    default ExtendedSpecification<T> or(@Nullable ExtendedSpecification<T> other) {
-        return ExtendedSpecificationComposition.composed(this, other, CriteriaBuilder::or);
+    default ExtensibleSpecification<T> or(@Nullable final ExtensibleSpecification<T> other) {
+        return ExtensibleSpecificationComposition.composed(this, other, CriteriaBuilder::or);
     }
 
     @Nullable
-    Predicate toPredicate(Root<T> root, CriteriaBuilder criteriaBuilder);
+    Predicate toPredicate(final Root<T> root, final CriteriaBuilder criteriaBuilder);
 }

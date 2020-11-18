@@ -1,6 +1,6 @@
 package com.recipe.config.spring.service;
 
-import com.recipe.config.spring.repository.BaseRepository;
+import com.recipe.config.spring.repository.ExtensibleRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Sort;
@@ -11,9 +11,9 @@ import java.util.Optional;
 
 @Transactional
 public abstract class AbstractService<T, R, ID extends Serializable> implements GenericService<T, ID> {
-    private BaseRepository<T, ID> repository;
+    private ExtensibleRepository<T, ID> repository;
 
-    public AbstractService(final BaseRepository<T, ID> repository) {
+    public AbstractService(final ExtensibleRepository<T, ID> repository) {
         this.repository = repository;
     }
 
@@ -28,7 +28,7 @@ public abstract class AbstractService<T, R, ID extends Serializable> implements 
 
     @Override public void save(final T bo) { this.repository.save(bo); }
     @Override public T update(final T bo) { return this.repository.save(bo); }
-    @Override public <S extends T> Iterable<S> saveAll(final Iterable<S> it) { return this.repository.saveAll(it); }
+    @Override public <S extends T> List<S> saveAll(final Iterable<S> it) { return this.repository.saveAll(it); }
 
     @Override public void delete(final T bo) { this.repository.delete(bo); }
     @Override public void deleteAll(final Iterable<T> it) { this.repository.deleteAll(it); }

@@ -7,6 +7,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -88,5 +90,24 @@ public final class IngredientServiceTest extends AbstractTest {
         Assert.assertTrue(results.size() > 1);
 
         IntStream.range(0, results.size()).forEach(i -> Assert.assertEquals(IngredientType.FRUIT, results.get(i).getType()));
+    }
+
+    @Test
+    public void should_delete_all_ingredients_deleteAll() {
+        new ArrayList<>();
+        final Ingredient papaya = new Ingredient("Papaya", IngredientType.FRUIT);
+        final Ingredient grenada = new Ingredient("Grenada", IngredientType.FRUIT);
+
+        final List<Ingredient> exoticFruits = (List<Ingredient>) ingredientService.saveAll(Arrays.asList(papaya, grenada));
+
+        Assert.assertNotNull(exoticFruits);
+        Assert.assertEquals(2, exoticFruits.size());
+        Assert.assertNotNull(exoticFruits.get(0).getId());
+        Assert.assertNotNull(exoticFruits.get(1).getId());
+
+        ingredientService.deleteAll(Arrays.asList(papaya, grenada));
+
+        final List<Ingredient> afterDelete = ingredientService.findAll(Arrays.asList(papaya, grenada));
+        Assert.assertTrue(afterDelete.isEmpty());
     }
 }

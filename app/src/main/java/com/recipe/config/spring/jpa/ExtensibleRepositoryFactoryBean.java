@@ -1,6 +1,7 @@
-package com.recipe.config.spring.repository;
+package com.recipe.config.spring.jpa;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.recipe.config.spring.repository.ExtensibleRepositoryImpl;
+import com.recipe.config.spring.jpa.support.ExtendedJpaRepository;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
@@ -11,9 +12,9 @@ import org.springframework.data.repository.core.support.RepositoryFactorySupport
 import javax.persistence.EntityManager;
 import java.io.Serializable;
 
-public class BaseRepositoryFactoryBean<R extends JpaRepository<T, ID>, T, ID extends Serializable> extends JpaRepositoryFactoryBean<R, T, ID> {
+public class ExtensibleRepositoryFactoryBean<R extends ExtendedJpaRepository<T, ID>, T, ID extends Serializable> extends JpaRepositoryFactoryBean<R, T, ID> {
 
-    public BaseRepositoryFactoryBean(final Class<? extends R> repositoryInterface) { super(repositoryInterface); }
+    public ExtensibleRepositoryFactoryBean(final Class<? extends R> repositoryInterface) { super(repositoryInterface); }
 
     @Override
     protected RepositoryFactorySupport createRepositoryFactory(final EntityManager em) {
@@ -32,12 +33,12 @@ public class BaseRepositoryFactoryBean<R extends JpaRepository<T, ID>, T, ID ext
 
         @Override
         protected JpaRepositoryImplementation<?, ?> getTargetRepository(final RepositoryInformation information, final EntityManager entityManager) {
-            return new BaseRepositoryImpl<T, ID>((Class<T>) information.getDomainType(), em);
+            return new ExtensibleRepositoryImpl<T, ID>((Class<T>) information.getDomainType(), em);
         }
 
         @Override
         protected Class<?> getRepositoryBaseClass(final RepositoryMetadata metadata) {
-            return BaseRepositoryImpl.class;
+            return ExtensibleRepositoryImpl.class;
         }
     }
 }

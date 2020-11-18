@@ -14,23 +14,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public final class BaseRepositoryTest extends AbstractTest {
+public final class ExtensibleRepositoryTest extends AbstractTest {
     @Autowired IngredientService ingredientService;
 
     /**
-     *  findAll(final Iterable<T> iterable, String... excludeFields)
-     *
-     *  Note : is null clause in query built is not tested because of MCD null constraints preventing null values on all columns of schema
+     *  findAll(final Iterable<T> iterable)
+     *  findAll(final Iterable<T> iterable, final Sort sort)
      */
     @Test
-    public void should_return_null_if_null_or_empty_iterable_findAll() {
-        // when : null parameters
-        final List<Ingredient> emptyIterable = ingredientService.findAll((Iterable<Ingredient>) Collections.EMPTY_LIST);
-        final List<Ingredient> nullParams = ingredientService.findAll((Iterable<Ingredient>) null);
-
-        // then : returns null
-        Assert.assertNull(nullParams);
-        Assert.assertNull(emptyIterable);
+    public void should_throw_exception_if_null_or_empty_param_iterable_findAll() {
+        // when : null parameters, java.lang.IllegalArgumentException
+        Assert.assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> ingredientService.findAll((Iterable<Ingredient>) Collections.EMPTY_LIST));
+        Assert.assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> ingredientService.findAll((Iterable<Ingredient>) null));
+        Assert.assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> ingredientService.findAll((Iterable<Ingredient>) null, Sort.by("name").ascending()));
+        Assert.assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class, () -> ingredientService.findAll((Iterable<Ingredient>) null, null));
     }
 
     @Test
@@ -78,7 +75,7 @@ public final class BaseRepositoryTest extends AbstractTest {
         final Ingredient lemon = new Ingredient("Lemon", IngredientType.FRUIT);
         final Ingredient mango = new Ingredient("Mango", IngredientType.FRUIT);
 
-        // when : findAll using spring data single parameter and custom BaseRepository impl
+        // when : findAll using spring data single parameter and custom ExtensibleRepository impl
         final List<Ingredient> defaultImpl = ingredientService.findAll(Example.of(lemon));
         final List<Ingredient> customImpl = ingredientService.findAll(Arrays.asList(lemon, mango));
 
