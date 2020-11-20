@@ -12,15 +12,20 @@ public interface GenericService<T, ID>
     Iterable<T> findAll(final Sort sort);
     Iterable<T> findAll();
     Iterable<T> findAllById(final Iterable<ID> it);
-    <S extends T> List<S> findAll(final Example<S> example);
-    <S extends T> List<S> findAll(final Example<S> example, final Sort sort);
-    <S extends T> List<S> findAll(Iterable<T> iterable);
-    <S extends T> List<S> findAll(final Iterable<T> iterable, final Sort sort);
+    List<T> findAll(final Example<T> example);
+    List<T> findAll(final Example<T> example, final Sort sort);
+    List<T> findAll(Iterable<T> iterable);
+    List<T> findAll(final Iterable<T> iterable, final Sort sort);
 
     void save(final T objectBO);
     T update(final T objectBO);
-    <S extends T> Iterable<S> saveAll(Iterable<S> it);
+    Iterable<T> saveAll(Iterable<T> it);
+    int insertAll(final Iterable<T> it, final boolean withId);
+    int overwriteAll(final Iterable<T> entities);
 
     void delete(final T objectBO);
     void deleteAll(final Iterable<T> it);
+
+    // re-written
+    void deleteAllSimpleJpaRepository(final Iterable<? extends T> entities); // replace : void deleteAll(final Iterable<T> it)
 }

@@ -1,15 +1,18 @@
 package com.recipe.config.spring.jpa.support;
 
 import com.recipe.config.spring.jpa.specification.ExtensibleSpecification;
+import org.hibernate.SessionFactory;
+import org.hibernate.metamodel.spi.MetamodelImplementor;
+import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.convert.QueryByExamplePredicateBuilder;
 import org.springframework.data.jpa.provider.PersistenceProvider;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.query.EscapeCharacter;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.data.jpa.repository.support.*;
 import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
 import org.springframework.data.util.ProxyUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
@@ -18,6 +21,8 @@ import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
+import javax.persistence.metamodel.ManagedType;
+import javax.persistence.metamodel.SingularAttribute;
 import java.util.*;
 
 @Repository
@@ -109,8 +114,19 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     @Override
     @Transactional
     public void deleteAll(final Iterable<? extends T> entities) {
-        final IterableSpecification spec = new IterableSpecification(entities, this.escapeCharacter);
+        final IterableSpecification spec = new IterableSpecification(entities, this.escapeCharacter, em);
         getDeleteQuery(spec, spec.getProbeType()).executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllSimpleJpaRepository(Iterable<? extends T> entities) {
+        Assert.notNull(entities, "Entities must not be null!");
+        final Iterator it = entities.iterator();
+
+        while(it.hasNext())
+            this.delete((T) it.next());
+
     }
 
     @Override
@@ -209,7 +225,7 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
         } else if (!this.entityInformation.hasCompositeId()) {
             final Collection<ID> idCollection = toCollection(ids);
             final ByIdsSpecification<T> specification = new ByIdsSpecification(this.entityInformation);
-            final TypedQuery<T> query = this.getSelectQuery(specification, (Sort)Sort.unsorted());
+            final TypedQuery<T> query = this.getSelectQuery(specification, Sort.unsorted());
             return query.setParameter(specification.parameter, idCollection).getResultList();
         } else {
             final List<T> results = new ArrayList();
@@ -282,14 +298,14 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     }
 
     @Override
-    public <S extends T> List<S> findAll(final Iterable<T> entities) {
+    public List<T> findAll(final Iterable<T> entities) {
         return this.findAll(entities, Sort.unsorted());
     }
 
     @Override
-    public <S extends T> List<S> findAll(final Iterable<T> entities, final Sort sort) {
-        final IterableSpecification<T> spec = new IterableSpecification<>(entities, this.escapeCharacter);
-        return (List<S>) this.getSelectQuery(spec, spec.getProbeType(), sort).getResultList();
+    public List<T> findAll(final Iterable<T> entities, final Sort sort) {
+        final IterableSpecification<T> spec = new IterableSpecification<>(entities, this.escapeCharacter, em);
+        return this.getSelectQuery(spec, spec.getProbeType(), sort).getResultList();
     }
 
     @Override
@@ -402,11 +418,80 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
         return this.applyRepositoryMethodMetadata(this.em.createQuery(query));
     }
 
+    // INSERT
+    @Override
+    @Transactional
+    public int insertAll(final Iterable<T> entities, final boolean withId) {
+        final IterableSpecification<T> spec = new IterableSpecification<>(entities, this.escapeCharacter, em);
+        final Iterator<T> beanIter = entities.iterator();
+        final Object[] attributes = spec.getManagedType().getSingularAttributes().toArray();
+        final List<String> mappedColumns = new ArrayList<>();
+        final StringBuilder insert = new StringBuilder("INSERT INTO " + spec.getTableName());
+        final StringBuilder cols = new StringBuilder(" (");
+        final StringBuilder values = new StringBuilder(" VALUES (");
+        final List<Object> valueList = new ArrayList<>();
+        DirectFieldAccessFallbackBeanWrapper beanWrapper = new DirectFieldAccessFallbackBeanWrapper(spec.head);
+        int idx = 0;
+        int i = 0;
+
+        while (beanIter.hasNext()) {
+            if (mappedColumns.isEmpty()) {
+                while (i < attributes.length) {
+                    final SingularAttribute attr = (SingularAttribute) attributes[i++];
+                    final Object value = beanWrapper.getPropertyValue(attr.getName());
+
+                    if (value != null && (withId || !attr.getName().equals("id"))) {
+                        cols.append(spec.getColumnName(attr));
+                        mappedColumns.add(attr.getName());
+                        valueList.add(spec.nonEnumType(value));
+
+                        if (i < attributes.length && (!withId && ((SingularAttribute) attributes[i]).getName().equals("id")))
+                            i++;
+                        if (i < attributes.length) {
+                            cols.append(",");
+                            values.append("?,");
+                        } else {
+                            cols.append(")");
+                            values.append(beanIter.hasNext() ? "?)," : "?)");
+                        }
+                        idx++;
+                    }
+                }
+                beanIter.next();
+            }
+            else {
+                beanWrapper = new DirectFieldAccessFallbackBeanWrapper(beanIter.next());
+                values.append("(");
+                for (int j = 0; j < mappedColumns.size(); j++) {
+                    valueList.add(Objects.requireNonNull(spec.nonEnumType(beanWrapper.getPropertyValue(mappedColumns.get(j)))));
+                    values.append(j < mappedColumns.size() - 1 ? "?," : "?)");
+                    idx++;
+                }
+                if (beanIter.hasNext())
+                    values.append(",");
+            }
+        }
+
+        final Query query = em.createNativeQuery(insert.toString() + cols.toString() + values.toString());
+
+        while (idx > 0)
+            query.setParameter(idx, valueList.get(idx-- - 1));
+
+        return query.executeUpdate();
+    }
+
+    @Override
+    public int overwriteAll(final Iterable<T> entities) {
+        deleteAll(entities);
+        return insertAll(entities, false);
+    }
+
+
     // DELETE
-    protected <S extends T> Query getDeleteQuery(@Nullable final ExtensibleSpecification<S> spec, final Class<S> domainClass) {
+    protected <T> Query getDeleteQuery(@Nullable final ExtensibleSpecification<T> spec, final Class<T> domainClass) {
         final CriteriaBuilder builder = this.em.getCriteriaBuilder();
-        final CriteriaDelete<S> delete = builder.createCriteriaDelete(domainClass);
-        final Root<S> root = delete.from(domainClass);
+        final CriteriaDelete<T> delete = builder.createCriteriaDelete(domainClass);
+        final Root<T> root = delete.from(domainClass);
 
         delete.where(spec.toPredicate(root, builder));
 
@@ -497,37 +582,54 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
 
     private static class IterableSpecification<T> implements ExtensibleSpecification<T> {
         private static final long serialVersionUID = 1L;
-        private final Iterable<T> examples;
-        private Class<? extends T> probeType;
         private final EscapeCharacter escapeCharacter;
+        private final Iterable<T> iterable;
+        private final T head;
+        private Class<T> probeType;
+        private final ManagedType<T> managedType;
+        private final String tableName;
+        private final AbstractEntityPersister entityPersister;
 
-        IterableSpecification(final Iterable<T> examples, final EscapeCharacter escapeCharacter) {
-            Assert.notNull(examples, "Examples must not be null!");
-            Assert.isTrue(examples.iterator().hasNext(), "Examples must not be empty!");
+        IterableSpecification(final Iterable<T> iterable, final EscapeCharacter escapeCharacter, final EntityManager em) {
+            Assert.notNull(iterable, "Examples must not be null!");
+            Assert.isTrue(iterable.iterator().hasNext(), "Examples must not be empty!");
             Assert.notNull(escapeCharacter, "EscapeCharacter must not be null!");
 
-            this.examples = examples;
             this.escapeCharacter = escapeCharacter;
+            this.iterable = iterable;
+            this.head = iterable.iterator().next();
+            this.probeType = (Class<T>) head.getClass();
+            this.managedType = em.getMetamodel().managedType(probeType);
+            this.tableName = em.getMetamodel().entity(this.probeType).getJavaType().getAnnotation(Table.class).name();
+            this.entityPersister = ((AbstractEntityPersister)((MetamodelImplementor) em.getEntityManagerFactory().unwrap(
+                    SessionFactory.class).getMetamodel()).entityPersister(probeType));
         }
 
         @Override
         public Predicate toPredicate(final Root<T> root, final CriteriaBuilder cb) {
-            final Iterator<T> it = this.examples.iterator();
-            final Example<T> example = Example.of(it.next());
-            this.probeType = example.getProbeType();
+            final Iterator<T> iterator = iterable.iterator();
+            iterator.next();
+            Predicate where = QueryByExamplePredicateBuilder.getPredicate(root, cb, Example.of(head), this.escapeCharacter);
 
-            Predicate where = QueryByExamplePredicateBuilder.getPredicate(root, cb, example, this.escapeCharacter);
-
-            while (it.hasNext()) {
-                final Predicate cond = QueryByExamplePredicateBuilder.getPredicate(root, cb, Example.of(it.next()), this.escapeCharacter);
+            while (iterator.hasNext()) {
+                final Predicate cond = QueryByExamplePredicateBuilder.getPredicate(root, cb, Example.of(iterator.next()), this.escapeCharacter);
                 where = cb.or(where, cond);
             }
 
             return where;
         }
 
-        public <S extends T> Class<S> getProbeType() {
-            return (Class<S>) (probeType == null ? Example.of(examples.iterator().next()).getProbeType() : probeType);
+        public Class<T> getProbeType() { return probeType; }
+        public ManagedType<T> getManagedType() { return managedType; }
+        public String getTableName() { return tableName; }
+        public String getColumnName(final String memberName) { return entityPersister.getPropertyColumnNames(memberName)[0]; }
+        public String getColumnName(final SingularAttribute singularAttribute) { return entityPersister.getPropertyColumnNames(singularAttribute.getName())[0]; }
+
+        public <T> Object nonEnumType(final T value) {
+            if (value instanceof Enum)
+                return ((Enum) value).name();
+            else
+                return value;
         }
     }
 

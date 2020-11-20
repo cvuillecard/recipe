@@ -18,6 +18,9 @@ import java.util.concurrent.TimeUnit;
  * Object : test performances of custom ExtensibleRepository implementation
  *
  * Note : compare existing methods provided by SimpleJpaRepository with ExtensibleRepository custom methods when possible
+ *
+ * @see com.recipe.config.spring.repository.ExtensibleRepository
+ * @see com.recipe.config.spring.jpa.support.ExtendedJpaRepositoryImpl
  */
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)

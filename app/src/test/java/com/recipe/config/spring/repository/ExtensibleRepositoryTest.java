@@ -38,7 +38,7 @@ public final class ExtensibleRepositoryTest extends AbstractTest {
         final Ingredient curry = new Ingredient("Curry", IngredientType.SPICE);
 
         // when : trying to find all ingredients stated
-        final List<Ingredient> ingredients = (List<Ingredient>) ingredientService.findAll(Arrays.asList(chicken, creamFresh, curry));
+        final List<Ingredient> ingredients = ingredientService.findAll(Arrays.asList(chicken, creamFresh, curry));
 
         // then : ingredients found
         Assert.assertNotNull(ingredients);

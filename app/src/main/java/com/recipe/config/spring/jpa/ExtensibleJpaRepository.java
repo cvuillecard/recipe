@@ -9,6 +9,10 @@ import java.util.List;
 
 @NoRepositoryBean
 public interface ExtensibleJpaRepository<T, ID> extends PagingAndSortingRepository<T, ID>, QueryByExampleExecutor<T> {
-    <S extends T> List<S> findAll(final Iterable<T> entities);
-    <S extends T> List<S> findAll(final Iterable<T> entities, final Sort sort);
+    List<T> findAll(final Iterable<T> entities);
+    List<T> findAll(final Iterable<T> entities, final Sort sort);
+    int insertAll(final Iterable<T> entities, final boolean withId);
+    int overwriteAll(final Iterable<T> entities);
+    // old versions
+    void deleteAllSimpleJpaRepository(final Iterable<? extends T> entities);
 }

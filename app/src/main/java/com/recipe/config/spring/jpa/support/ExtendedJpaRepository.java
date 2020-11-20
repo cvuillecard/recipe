@@ -21,6 +21,7 @@ public interface ExtendedJpaRepository<T, ID> extends JpaRepositoryImplementatio
     default Page<T> findAll(final Specification<T> specification, final Pageable pageable) { return Page.empty(); }
     default List<T> findAll(final Specification<T> specification, final Sort sort) { return Collections.EMPTY_LIST; }
     default long count(final Specification<T> specification) { return 0; }
+
 }
 
 //

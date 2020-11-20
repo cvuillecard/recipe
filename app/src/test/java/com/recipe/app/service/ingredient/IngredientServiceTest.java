@@ -6,6 +6,7 @@ import config.AbstractTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,6 +105,25 @@ public final class IngredientServiceTest extends AbstractTest {
         Assert.assertEquals(2, exoticFruits.size());
         Assert.assertNotNull(exoticFruits.get(0).getId());
         Assert.assertNotNull(exoticFruits.get(1).getId());
+
+        ingredientService.deleteAll(Arrays.asList(papaya, grenada));
+
+        final List<Ingredient> afterDelete = ingredientService.findAll(Arrays.asList(papaya, grenada));
+        Assert.assertTrue(afterDelete.isEmpty());
+    }
+
+    @Test
+    public void should_save_all_ingredients_saveAll() {
+        new ArrayList<>();
+        final Ingredient papaya = new Ingredient("Papaya", IngredientType.FRUIT);
+        final Ingredient grenada = new Ingredient("Grenada", IngredientType.FRUIT);
+
+        final int nbRows = ingredientService.insertAll(Arrays.asList(papaya, grenada), false);
+
+//        Assert.assertNotNull(exoticFruits);
+        Assert.assertEquals(2, nbRows);
+//        Assert.assertNotNull(exoticFruits.get(0).getId());
+//        Assert.assertNotNull(exoticFruits.get(1).getId());
 
         ingredientService.deleteAll(Arrays.asList(papaya, grenada));
 
