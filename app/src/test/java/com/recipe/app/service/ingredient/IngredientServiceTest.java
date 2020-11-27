@@ -2,23 +2,14 @@ package com.recipe.app.service.ingredient;
 
 import com.recipe.app.entity.ingredient.Ingredient;
 import com.recipe.app.type.ingredient.IngredientType;
-import com.recipe.config.spring.JpaConfig;
+import config.AbstractTest;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.Optional;
 
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = JpaConfig.class)
-@ActiveProfiles("test")
-public final class IngredientServiceTest {
+public final class IngredientServiceTest extends AbstractTest {
     @Autowired private IngredientService ingredientService;
 
     @Test
