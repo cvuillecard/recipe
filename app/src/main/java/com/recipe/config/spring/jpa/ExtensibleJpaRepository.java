@@ -13,6 +13,7 @@ public interface ExtensibleJpaRepository<T, ID> extends PagingAndSortingReposito
     List<T> findAll(final Iterable<T> entities, final Sort sort);
     int insertAll(final Iterable<T> entities, final boolean withId);
     int overwriteAll(final Iterable<T> entities);
+    void flushAndClear();
     // old versions
     void deleteAllSimpleJpaRepository(final Iterable<? extends T> entities);
 }

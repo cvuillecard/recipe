@@ -26,7 +26,7 @@ public abstract class AbstractService<T, R, ID extends Serializable> implements 
     @Override public List<T> findAll(final Iterable<T> iterable) { return this.repository.findAll(iterable); }
     @Override public List<T> findAll(final Iterable<T> iterable, final Sort sort) { return this.repository.findAll(iterable, sort); }
 
-    @Override public void save(final T bo) { this.repository.save(bo); }
+    @Override public T save(final T bo) { return this.repository.save(bo); }
     @Override public T update(final T bo) { return this.repository.save(bo); }
     @Override public List<T> saveAll(final Iterable<T> it) { return this.repository.saveAll(it); }
     @Override public int insertAll(final Iterable<T> it, final boolean withId) { return this.repository.insertAll(it, withId); }

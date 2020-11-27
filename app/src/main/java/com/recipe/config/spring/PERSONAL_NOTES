@@ -1,0 +1,64 @@
+
+Purpose : subjective and personal analysis of the class SimpleJpaRepository (default implementation of CrudRepository.class interface)
+Context : this class is actually maintained by the community on the spring-data-jpa (https://github.com/spring-projects/spring-data-jpa)
+
+Observations :
+
+- 1 : entities are not following the interface contract. Even if i know the reason, because of not necessary, it is still an anti-pattern in programming.
+      And it locks the dao implementation to the only bean managed, and take off the flexibility that interfaces offer
+      (example: Collections, or grouping different beans which have common criterias, interfaces inheritance ensure a child content (ex:DTO)), and simply clarity of code in many cases).
+      Even if a majority of persons think the interfaces useless when applied on entities because of no functional interest, it's the opposite of the POO good practices,
+      and even if they're right with this approach, it involves other problems in practice.
+      I think that this gold rule must be respected to keep a maintainable code, and most of the time, even if we had 1000 entities in an application
+      (means 1000 concrete classes + 1000 interfaces = 2000 class objects), the performance bottlenecks would never be the number of class,
+      but most of the time, the slowness execution at runtime. (ex : db queries, or bad handling of code execution)
+
+- 2 : Certain operations for write operations are delegated to the entityManager. So each write operation correspond to one query by entity,
+      therefore certain methods can be improved to have better performances by grouping write operations in one query for all the entities passed to the method.
+
+        > SimpleJpaRepository.saveAll(Iterable<T> entities);
+        > SimpleJpaRepository.deleteAll(Iterable<T> entities);
+
+- 3 : SimpleJpaRepository uses the criteria API only for read operations. No CriteriaDelete or CriteriaUpdate queries are used.
+      In fact, defining the query behaviours by some classes of 'specification' is good.
+      But all these actual specification classes are inner static and private to SimpleJpaRepository.
+      So extending the specification panel is a hard work. And all these classes must inherit of Specification.class which contains a method called :
+
+            > Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb);
+
+      The goal of this function is to generate the 'where' clause in a select query.
+      As CriteriaQuery type is used, only select (read-only) operations can be performed.
+      So i agree, in this case extending the specification behaviour loose sense.
+      But in fact, this CriteriaQuery type as parameter is NEVER USED in implementations, so it can be removed, because it restricts the specification implementations
+      to select operations only using criteria API. (We could extend the specifications to handle bulk update/delete operations)
+
+4 - A lot of method signatures are not justified. We can see a lot of methods
+    which handle a subtype of T like <S extends T> method(), in interfaces.
+    In my opinion, it's linked to the point 1, because the super classes used to implement custom jpa repositories don't hold a super type in their signature
+    to represent a parent class for entities.
+
+    Conclusion : on another 'private' branch that i didn't push yet on github, i started my custom implementation by re-inserting the missing interface generic type of entities
+    (even if all is locked to not being able to do it). I'll try to keep the 'specification' system, but in opening them for implementations by externalization.
+    Another point is the isolation, i am obliged to work with the existing CrudRepository.class, so i cannot delete the <S extends T> of certain method signatures, to have only a unique infered type T.
+
+> The community took decisions on spring-data-jpa and is responsible of its evolution. So, because i cannot tell that on github or i would directly be banned, i keep these reflexions on my repository, respecting all the work done.
+
+But i cannot see how the actual SimpleJpaRepository can answer to custom needs of implementations or performance needs when we only need to insert multiple values in a table by one sql query.
+
+Suggestions :
+
+1 - If we wanted to avoid the method type specialization <S extends T> which represents a sub-type of <T> in a lot of method signatures,
+    we'd better to directly modify the existing super-classes signatures (ex: CrudRepository, and the rest) to involve a super type as generic to represent a parent of an entity.
+    (Again the actual type specializations of these methods are linked to the problem described in the point 1, and can be replaced by one type <T> in my opinion)
+    > see the branch 'github/genericDAO' > AbstractJpaDao.class to understand the problem of the repository class signature without a generic super type
+2 - I like the system of specification classes, but the actual specifications inner classes only provide read-only operations,
+    and are hardly extendable because of their visibility. They could be externalized.
+3 - I don't understand why a lot of methods are annotated with a @Transactional.
+    Should'nt it be present on service abstractions or service methods only ?
+    Because of the default type propagation of the annotation @Transactional(Propagation.REQUIRED), would'nt it be a problem in certain cases ?
+    Isn't it to the user of spring-data-jpa to define its own propagation type on methods or interfaces to control this behaviour ?
+4 - I understand that using entityManager for certain bulk operations as deleteAll(Iterable) and saveAll(Iterable) has been chosen,
+    but it involve one query by entity of the iterable elements. We can for sure improve performances of these methods.
+
+Note : Please forgive-me for all these critics, i am not a spring or jpa expert but it's my right to have an opinion on this implementation,
+       and spring-data offers a magic way to generate and write queries. But for this part, i think we can ameliorate certain things.

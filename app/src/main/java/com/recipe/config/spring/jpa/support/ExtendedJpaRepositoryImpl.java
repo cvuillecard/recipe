@@ -25,8 +25,22 @@ import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.SingularAttribute;
 import java.util.*;
 
+/**
+ * Note : Because of certain classes in a package visibility, certain classes used in ExtendedJpaRepositoryImpl are forked
+ * from the default spring-data-jpa implementation. (@see refs)
+ *
+ * Important : this class is just a test for analysis and comprehension of what has been implemented.
+ * Certain methods actually are being re-written to improve their performances -> concerns only write operations with multiple entities
+ * (example : findAll(Iterable), deleteAll(Iterable))
+ *
+ * @param <T> the concrete implementation of entity
+ * @param <ID> the type of id used by entity
+ *
+ * (see com.recipe.config.spring.PERSONAL_NOTES for personal reflexion)
+ * @see com.recipe.config.spring.jpa.specification.ExtensibleSpecification
+ * @see com.recipe.config.spring.jpa.specification.ExtensibleSpecificationComposition
+ */
 @Repository
-@Transactional(readOnly=true)
 public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T, ID> {
     private final JpaEntityInformation<T, ?> entityInformation;
     private final EntityManager em;
@@ -93,14 +107,12 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     }
 
     @Override
-    @Transactional
     public void deleteById(final ID id) {
         Assert.notNull(id, "The given id must not be null!");
         this.delete(this.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(String.format("No %s entity with id %s exists!", this.entityInformation.getJavaType(), id), 1)));
     }
 
     @Override
-    @Transactional
     public void delete(final T entity) {
         Assert.notNull(entity, "Entity must not be null!");
         if (!this.entityInformation.isNew(entity)) {
@@ -111,15 +123,23 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
         }
     }
 
+
+    /**
+     * new version of SimpleJpaRepository.deleteAll(Iterable<? extends T> entities)
+     * Note : the type specialization as <? extends T> is not necessary but here to respect the old method signature.
+     * (see com.recipe.config.spring.PERSONAL_NOTES for personal reflexion on it)
+     */
     @Override
-    @Transactional
     public void deleteAll(final Iterable<? extends T> entities) {
         final IterableSpecification spec = new IterableSpecification(entities, this.escapeCharacter, em);
         getDeleteQuery(spec, spec.getProbeType()).executeUpdate();
     }
 
+    /**
+     * old version of SimpleJpaRepository.deleteAll(Iterable<? extends T> entities)
+     * @param entities
+     */
     @Override
-    @Transactional
     public void deleteAllSimpleJpaRepository(Iterable<? extends T> entities) {
         Assert.notNull(entities, "Entities must not be null!");
         final Iterator it = entities.iterator();
@@ -130,7 +150,6 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     }
 
     @Override
-    @Transactional
     public void deleteInBatch(Iterable<T> entities) {
         Assert.notNull(entities, "Entities must not be null!");
         if (entities.iterator().hasNext())
@@ -138,7 +157,6 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     }
 
     @Override
-    @Transactional
     public void deleteAll() {
         final Iterator it = this.findAll().iterator();
 
@@ -149,7 +167,6 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     }
 
     @Override
-    @Transactional
     public void deleteAllInBatch() {
         this.em.createQuery(this.getDeleteAllQueryString()).executeUpdate();
     }
@@ -240,12 +257,12 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
 
     @Override
     public List<T> findAll(final Sort sort) {
-        return this.getSelectQuery((ExtensibleSpecification)null, sort).getResultList();
+        return this.getSelectQuery(null, sort).getResultList();
     }
 
     @Override
     public Page<T> findAll(final Pageable pageable) {
-        return (Page)(isUnpaged(pageable) ? new PageImpl(this.findAll()) : this.findAll((ExtensibleSpecification)null, pageable));
+        return (isUnpaged(pageable) ? new PageImpl(this.findAll()) : this.findAll((ExtensibleSpecification)null, pageable));
     }
 
     @Override
@@ -265,7 +282,7 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     @Override
     public Page<T> findAll(@Nullable final ExtensibleSpecification<T> spec, final Pageable pageable) {
         final TypedQuery<T> query = this.getSelectQuery(spec, pageable);
-        return (Page)(isUnpaged(pageable) ? new PageImpl(query.getResultList()) : this.readPage(query, this.getDomainClass(), pageable, spec));
+        return (isUnpaged(pageable) ? new PageImpl(query.getResultList()) : this.readPage(query, this.getDomainClass(), pageable, spec));
     }
 
     @Override
@@ -274,9 +291,11 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     }
 
     @Override
-    public <S extends T> Optional<S> findOne(final Example<S> example) {
+    public <S extends T> Optional<S>  findOne(final Example<S> example) {
         try {
-            return (Optional<S>) Optional.of(this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), example.getProbeType(), Sort.unsorted()).getSingleResult());
+            // bad casting. useless because the method signature is wrong
+            final S singleResult = (S) this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), (Class<T>) example.getProbeType(), Sort.unsorted()).getSingleResult();
+            return Optional.of(singleResult);
         } catch (NoResultException var3) {
             return Optional.empty();
         }
@@ -289,12 +308,12 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
 
     @Override
     public <S extends T> boolean exists(final Example<S> example) {
-        return !this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), example.getProbeType(), Sort.unsorted()).getResultList().isEmpty();
+        return !this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), (Class<T>)example.getProbeType(), Sort.unsorted()).getResultList().isEmpty();
     }
 
     @Override
     public <S extends T> List<S> findAll(final Example<S> example) {
-        return this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), example.getProbeType(), Sort.unsorted()).getResultList();
+        return this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), (Class<T>)example.getProbeType(), Sort.unsorted()).getResultList();
     }
 
     @Override
@@ -310,14 +329,14 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
 
     @Override
     public <S extends T> List<S> findAll(final Example<S> example, Sort sort) {
-        return this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), example.getProbeType(), sort).getResultList();
+        return this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), (Class<T>)example.getProbeType(), sort).getResultList();
     }
 
     @Override
     public <S extends T> Page<S> findAll(final Example<S> example, final Pageable pageable) {
-        final ExampleSpecification<S> spec = new ExampleSpecification(example, this.escapeCharacter);
-        final Class<S> probeType = example.getProbeType();
-        final TypedQuery<S> query = this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), probeType, pageable);
+        final ExampleSpecification<T> spec = new ExampleSpecification(example, this.escapeCharacter);
+        final Class<T> probeType = (Class<T>)example.getProbeType();
+        final TypedQuery<T> query = this.getSelectQuery(new ExampleSpecification(example, this.escapeCharacter), probeType, pageable);
 
         return (Page)(isUnpaged(pageable) ? new PageImpl(query.getResultList()) : this.readPage(query, probeType, pageable, spec));
     }
@@ -333,7 +352,6 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     }
 
     @Override
-    @Transactional
     public <S extends T> S save(final S entity) {
         Assert.notNull(entity, "Entity must not be null.");
 
@@ -353,8 +371,8 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
         return result;
     }
 
+    // see insertAll() for new version
     @Override
-    @Transactional
     public <S extends T> List<S> saveAll(final Iterable<S> entities) {
         Assert.notNull(entities, "Entities must not be null!");
 
@@ -368,10 +386,12 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
     }
 
     @Override
-    @Transactional
     public void flush() {
         this.em.flush();
     }
+
+    @Override
+    public void flushAndClear() { em.flush(); em.clear(); }
 
     /** @deprecated */
     @Deprecated
@@ -395,7 +415,7 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
         return this.getSelectQuery(spec, this.getDomainClass(), sort);
     }
 
-    protected <S extends T> TypedQuery<S> getSelectQuery(@Nullable final ExtensibleSpecification<S> spec, final Class<S> domainClass, final Pageable pageable) {
+    protected TypedQuery<T> getSelectQuery(@Nullable final ExtensibleSpecification<T> spec, final Class<T> domainClass, final Pageable pageable) {
         Sort sort = pageable.isPaged() ? pageable.getSort() : Sort.unsorted();
         return this.getSelectQuery(spec, domainClass, sort);
     }
@@ -404,10 +424,10 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
         return this.getSelectQuery(spec, this.getDomainClass(), sort);
     }
 
-    protected <S extends T> TypedQuery<S> getSelectQuery(@Nullable final ExtensibleSpecification<S> spec, final Class<S> domainClass, final Sort sort) {
+    protected TypedQuery<T> getSelectQuery(@Nullable final ExtensibleSpecification<T> spec, final Class<T> domainClass, final Sort sort) {
         final CriteriaBuilder builder = this.em.getCriteriaBuilder();
-        final CriteriaQuery<S> query = builder.createQuery(domainClass);
-        final Root<S> root = this.applySpecificationToCriteria(spec, domainClass, query);
+        final CriteriaQuery<T> query = builder.createQuery(domainClass);
+        final Root<T> root = this.applySpecificationToCriteria(spec, domainClass, query);
 
         query.select(root);
 
@@ -420,7 +440,6 @@ public class ExtendedJpaRepositoryImpl<T, ID> implements ExtendedJpaRepository<T
 
     // INSERT
     @Override
-    @Transactional
     public int insertAll(final Iterable<T> entities, final boolean withId) {
         final IterableSpecification<T> spec = new IterableSpecification<>(entities, this.escapeCharacter, em);
         final Iterator<T> beanIter = entities.iterator();

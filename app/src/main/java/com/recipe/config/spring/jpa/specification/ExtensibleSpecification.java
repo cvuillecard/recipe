@@ -22,6 +22,10 @@ import java.io.Serializable;
  * Reason 2 : because the parameter 'CriteriaQuery query' is never used in the actual spring implementation
  * of methods org.springframework.data.jpa.domain.SpecificationComposition.toPredicate()
  * which uses org.springframework.data.jpa.domain.Specification.toPredicate()
+ *
+ * Note : All specification classes implemented in SimpleJpaRepository (which is the default implementation of CrudRepository.class)
+ * are inner static and private. So it's hard to extend the specification panel. These specification classes provide read-only operations.
+ *
  * </pre>
  *
  * @see org.springframework.data.jpa.domain.SpecificationComposition#toPredicate(Specification, Root, CriteriaQuery, CriteriaBuilder)

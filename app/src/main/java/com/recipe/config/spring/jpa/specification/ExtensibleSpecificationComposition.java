@@ -26,10 +26,9 @@ import java.io.Serializable;
  *
  * @see org.springframework.data.jpa.domain.SpecificationComposition#toPredicate(Specification, Root, CriteriaQuery, CriteriaBuilder)
  * @see org.springframework.data.jpa.domain.Specification#toPredicate(Root, CriteriaQuery, CriteriaBuilder)
- *
  * @see ExtensibleSpecification#toPredicate(Root, CriteriaBuilder)
  */
-class ExtensibleSpecificationComposition {
+public class ExtensibleSpecificationComposition {
     ExtensibleSpecificationComposition() {}
 
     static <T> ExtensibleSpecification<T> composed(@Nullable final ExtensibleSpecification<T> lhs, @Nullable final ExtensibleSpecification<T> rhs, final ExtensibleSpecificationComposition.Combiner combiner) {

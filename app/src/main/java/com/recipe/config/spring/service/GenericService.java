@@ -17,7 +17,7 @@ public interface GenericService<T, ID>
     List<T> findAll(Iterable<T> iterable);
     List<T> findAll(final Iterable<T> iterable, final Sort sort);
 
-    void save(final T objectBO);
+    T save(final T objectBO);
     T update(final T objectBO);
     Iterable<T> saveAll(Iterable<T> it);
     int insertAll(final Iterable<T> it, final boolean withId);

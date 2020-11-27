@@ -18,23 +18,6 @@ public class ExtensibleRepositoryImpl<T, ID extends Serializable> extends Extend
         this.em = em;
     }
 
-
-//    protected <S extends T> TypedQuery<S> getDeleteQuery(@Nullable IterableSpecification<S> spec, Class<S> domainClass, Sort sort) {
-//        CriteriaBuilder builder = this.em.getCriteriaBuilder();
-//        CriteriaDelete<S> delete = builder.createCriteriaDelete(domainClass);
-//        Root<S> root = delete.from(domainClass);
-//        // Actual spring implementation doesn't allow the use of CriteriaDelete in interface Specification :
-//        // method Specification.toPredicate() doesn't provide this type of parameter so we hard code the implementation in the method to
-//        // avoid impact on the spring actual implementation
-//        Predicate where = spec.toPredicate(root, delete, builder);
-//        delete.select(root);
-//        if (sort.isSorted()) {
-//            delete.orderBy(QueryUtils.toOrders(sort, root, builder));
-//        }
-//
-//        return this.applyRepositoryMethodMetadata(this.em.createQuery(delete));
-//    }
-
     @Override
     public void detach(final T bean) {
         em.detach(bean);
