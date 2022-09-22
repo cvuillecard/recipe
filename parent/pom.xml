@@ -24,7 +24,7 @@
         <project.test.resources>src/test/resources</project.test.resources>
 
         <!--General versions-->
-        <postgresql.version>9.4-1201-jdbc4</postgresql.version>
+        <postgresql.version>42.3.7</postgresql.version>
         <spring.version>5.3.0</spring.version>
         <spring.test.version>5.3.0</spring.test.version>
         <hibernate.version>5.4.13.Final</hibernate.version>
