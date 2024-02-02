@@ -25,7 +25,7 @@
 
         <!--General versions-->
         <postgresql.version>9.4-1201-jdbc4</postgresql.version>
-        <spring.version>5.3.0</spring.version>
+        <spring.version>5.3.19</spring.version>
         <spring.test.version>5.3.0</spring.test.version>
         <hibernate.version>5.4.13.Final</hibernate.version>
         <javax.persistence.version>2.2</javax.persistence.version>
